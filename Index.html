@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>December Advent Calendar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background: linear-gradient(135deg, #0f172a, #1d283a);
+      color: #f9fafb;
+    }
+
+    h1 {
+      margin: 20px 10px 10px;
+      text-align: center;
+    }
+
+    p.subtitle {
+      margin: 0 10px 20px;
+      text-align: center;
+      opacity: 0.8;
+      font-size: 0.95rem;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+      gap: 12px;
+      width: min(900px, 100%);
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .day {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      border: 1px solid rgba(248, 250, 252, 0.2);
+      background: rgba(15, 23, 42, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease,
+                  background 0.15s ease, border-color 0.15s ease;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .day:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.7);
+      background: rgba(30, 64, 175, 0.9);
+      border-color: rgba(191, 219, 254, 0.8);
+    }
+
+    .day.locked {
+      cursor: not-allowed;
+      opacity: 0.5;
+      background: rgba(15, 23, 42, 0.5);
+      border-style: dashed;
+    }
+
+    .day.locked::after {
+      content: "🔒";
+      position: absolute;
+      bottom: 6px;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #020617;
+      border-radius: 16px;
+      padding: 16px;
+      max-width: min(800px, 95vw);
+      max-height: 90vh;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-title {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .close-btn {
+      border: none;
+      background: transparent;
+      color: #f9fafb;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    .close-btn:hover {
+      background: rgba(148, 163, 184, 0.3);
+    }
+
+    .modal-content {
+      margin-top: 4px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content img,
+    .modal-content video {
+      max-width: 100%;
+      max-height: 70vh;
+      display: block;
+    }
+
+    .modal-caption {
+      margin-top: 4px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    footer {
+      margin: 10px;
+      font-size: 0.75rem;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <h1>December Advent Calendar</h1>
+  <p class="subtitle">
+    Click on today’s date to reveal a surprise photo or video!
+  </p>
+
+  <div class="calendar" id="calendar"></div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle"></div>
+        <button class="close-btn" id="modalClose" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-content" id="modalContent"></div>
+      <div class="modal-caption" id="modalCaption"></div>
+    </div>
+  </div>
+
+  <footer>Made with ❤️ for December</footer>
+
+  <script>
+    // === 1) Configure your media here ===
+    // type: "image" or "video"
+    // src:  path or URL to the file
+    // caption: small text shown under the media
+
+    const mediaByDay = {
+      1: {
+        type: "image",
+        src: "media/01.jpg",
+        caption: "Day 1 – Your text here."
+      },
+      2: {
+        type: "video",
+        src: "media/02.mp4",
+        caption: "Day 2 – Your video caption."
+      },
+      // ...
+      // Add entries up to 31 if you want
+      25: {
+        type: "image",
+        src: "media/25.png",
+        caption: "Merry Christmas!"
+      }
+      // Any days not listed will show a default “no content yet” message.
+    };
+
+    // === 2) Settings ===
+    const daysInDecember = 31;
+    const lockByDate = true; // set to false if you don’t want locking
+
+    // === 3) Calendar generation ===
+    const calendarEl = document.getElementById("calendar");
+    const today = new Date();
+    const isDecember = today.getMonth() === 11; // 0 = Jan, 11 = Dec
+    const todayDate = today.getDate();
+
+    for (let day = 1; day <= daysInDecember; day++) {
+      const dayEl = document.createElement("div");
+      dayEl.className = "day";
+      dayEl.textContent = day;
+      dayEl.dataset.day = day;
+
+      const locked =
+        lockByDate && isDecember && day > todayDate
+          ? true
+          : lockByDate && isDecember && day > todayDate
+          ? true
+          : lockByDate && !isDecember
+          ? false
+          : lockByDate && isDecember && day > todayDate;
+
+      // simpler: lock if December AND lockByDate AND day > todayDate
+      const actuallyLocked = lockByDate && isDecember && day > todayDate;
+      if (actuallyLocked) {
+        dayEl.classList.add("locked");
+      }
+
+      dayEl.addEventListener("click", () => {
+        if (actuallyLocked) {
+          // Optionally show a message instead of just doing nothing
+          alert("That day is not unlocked yet!");
+          return;
+        }
+        openModalForDay(day);
+      });
+
+      calendarEl.appendChild(dayEl);
+    }
+
+    // === 4) Modal logic ===
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalContent = document.getElementById("modalContent");
+    const modalCaption = document.getElementById("modalCaption");
+    const modalClose = document.getElementById("modalClose");
+
+    function openModalForDay(day) {
+      const data = mediaByDay[day];
+
+      modalTitle.textContent = `December ${day}`;
+      modalContent.innerHTML = ""; // clear previous
+      modalCaption.textContent = "";
+
+      if (!data) {
+        modalContent.innerHTML = "<p style='padding: 10px;'>No content for this day yet.</p>";
+      } else if (data.type === "image") {
+        const img = document.createElement("img");
+        img.src = data.src;
+        img.alt = `Day ${day}`;
+        modalContent.appendChild(img);
+        if (data.caption) modalCaption.textContent = data.caption;
+      } else if (data.type === "video") {
+        const video = document.createElement("video");
+        video.src = data.src;
+        video.controls = true;
+        video.autoplay = true;
+        modalContent.appendChild(video);
+        if (data.caption) modalCaption.textContent = data.caption;
+      } else {
+        modalContent.innerHTML = "<p>Unknown media type.</p>";
+      }
+
+      modalBackdrop.classList.add("active");
+    }
+
+    function closeModal() {
+      modalBackdrop.classList.remove("active");
+      modalContent.innerHTML = "";
+    }
+
+    modalClose.addEventListener("click", closeModal);
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) closeModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+  </script>
+</body>
+</html>
