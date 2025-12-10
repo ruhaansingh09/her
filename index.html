@@ -6,22 +6,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      background: linear-gradient(135deg, #0f172a, #1d283a);
-      color: #f9fafb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  color: #f9fafb;
+
+  /* ✨ background image + gradient overlay */
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(76, 29, 149, 0.7)),
+    url("media/bg.jpg") center/cover fixed no-repeat;
     }
 
     h1 {
-      margin: 20px 10px 10px;
-      text-align: center;
+  margin: 24px 10px 6px;
+  text-align: center;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 1.6rem;
+
+  /* ✨ waving animation */
+  animation: wave 3s ease-in-out infinite;
+  transform-origin: center bottom;
     }
+
+    @keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-1.5deg); }
+  50%      { transform: rotate(1.5deg); }
+  75%      { transform: rotate(-1deg); }
+    }
+
+    @keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+    }
+
+    .day.clicked {
+  animation: pop 200ms ease-out;
+    }
+
+
 
     p.subtitle {
       margin: 0 10px 20px;
@@ -53,6 +83,11 @@
                   background 0.15s ease, border-color 0.15s ease;
       font-weight: 600;
       font-size: 1.1rem;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #f9fafb;
+      text-shadow: 0 2px 4px rgba(15, 23, 42, 0.9);
     }
 
     .day:hover {
@@ -161,7 +196,7 @@
   </style>
 </head>
 <body>
-  <h1>December Advent Calendar</h1>
+  <h1>FOR YOU, A SMALL MEMORY FOR EVERYDAY WE ARE APART ❤️</h1>
   <p class="subtitle">
     Click on today’s date to reveal a cute or embarrassing (cuter) photo hehehehehehehe!!!!
   </p>
@@ -189,24 +224,38 @@
     // caption: small text shown under the media
 
     const mediaByDay = {
-      1: {
-        type: "image",
-        src: "media/01.jpg",
-        caption: "Day 1 – Your text here."
-      },
-      2: {
-        type: "video",
-        src: "media/02.mp4",
-        caption: "Day 2 – Your video caption."
-      },
-      // ...
-      // Add entries up to 31 if you want
-      25: {
-        type: "image",
-        src: "media/25.png",
-        caption: "Merry Christmas!"
-      }
-      // Any days not listed will show a default “no content yet” message.
+      1:  { type: "image", src: "media/01.jpg", thumb: "media/thumbs/01.jpg", caption: "Day 1 – i love you" },
+        2:  { type: "image", src: "media/02.jpg", thumb: "media/thumbs/02.jpg", caption: "Day 2 – i love youu" },
+        3:  { type: "image", src: "media/03.jpg", thumb: "media/thumbs/03.jpg", caption: "Day 3 – i love youuu" },
+        4:  { type: "image", src: "media/04.jpg", thumb: "media/thumbs/04.jpg", caption: "Day 4 – i love youuuu" },
+        5:  { type: "image", src: "media/05.jpg", thumb: "media/thumbs/05.jpg", caption: "Day 5 – i love youuuuu" },
+        6:  { type: "image", src: "media/06.jpg", thumb: "media/thumbs/06.jpg", caption: "Day 6 – i love youuuuuu" },
+        7:  { type: "image", src: "media/07.jpg", thumb: "media/thumbs/07.jpg", caption: "Day 7 – i love youuuuuuu" },
+        8:  { type: "image", src: "media/08.jpg", thumb: "media/thumbs/08.jpg", caption: "Day 8 – i love youuuuuuuu" },
+        9:  { type: "image", src: "media/09.jpg", thumb: "media/thumbs/09.jpg", caption: "Day 9 – i love youuuuuuuuu" },
+        10: { type: "image", src: "media/10.jpg", thumb: "media/thumbs/10.jpg", caption: "Day 10 – i love youuuuuuuuuu" },
+        11: { type: "image", src: "media/11.jpg", thumb: "media/thumbs/11.jpg", caption: "Day 11 – HAPPY 4 MONTHS I LOVE YOU SO MUCH" },
+        12: { type: "image", src: "media/12.jpg", thumb: "media/thumbs/12.jpg", caption: "Day 12 – i love youuuuuuuuuuuu" },
+        13: { type: "image", src: "media/13.jpg", thumb: "media/thumbs/13.jpg", caption: "Day 13 – Your text here." },
+        14: { type: "image", src: "media/14.jpg", thumb: "media/thumbs/14.jpg", caption: "Day 14 – Your text here." },
+        15: { type: "image", src: "media/15.jpg", thumb: "media/thumbs/15.jpg", caption: "Day 15 – Your text here." },
+        16: { type: "image", src: "media/16.jpg", thumb: "media/thumbs/16.jpg", caption: "Day 16 – Your text here." },
+        17: { type: "image", src: "media/17.jpg", thumb: "media/thumbs/17.jpg", caption: "Day 17 – Your text here." },
+        18: { type: "image", src: "media/18.jpg", thumb: "media/thumbs/18.jpg", caption: "Day 18 – Your text here." },
+        19: { type: "image", src: "media/19.jpg", thumb: "media/thumbs/19.jpg", caption: "Day 19 – Your text here." },
+        20: { type: "image", src: "media/20.jpg", thumb: "media/thumbs/20.jpg", caption: "Day 20 – Your text here." },
+        21: { type: "image", src: "media/21.jpg", thumb: "media/thumbs/21.jpg", caption: "Day 21 – Your text here." },
+        22: { type: "image", src: "media/22.jpg", thumb: "media/thumbs/22.jpg", caption: "Day 22 – Your text here." },
+        23: { type: "image", src: "media/23.jpg", thumb: "media/thumbs/23.jpg", caption: "Day 23 – Your text here." },
+        24: { type: "image", src: "media/24.jpg", thumb: "media/thumbs/24.jpg", caption: "Day 24 – Your text here." },
+        25: { type: "image", src: "media/25.jpg", thumb: "media/thumbs/25.jpg", caption: "Day 25 – Merry Christmas 🎄" },
+        26: { type: "image", src: "media/26.jpg", thumb: "media/thumbs/26.jpg", caption: "Day 26 – Your text here." },
+        27: { type: "image", src: "media/27.jpg", thumb: "media/thumbs/27.jpg", caption: "Day 27 – Your text here." },
+        28: { type: "image", src: "media/28.jpg", thumb: "media/thumbs/28.jpg", caption: "Day 28 – Your text here." },
+        29: { type: "image", src: "media/29.jpg", thumb: "media/thumbs/29.jpg", caption: "Day 29 – Your text here." },
+        30: { type: "image", src: "media/30.jpg", thumb: "media/thumbs/30.jpg", caption: "Day 30 – Your text here." },
+        31: { type: "image", src: "media/31.jpg", thumb: "media/thumbs/31.jpg", caption: "Day 31 – Happy New Year ✨" }
+
     };
 
     // === 2) Settings ===
@@ -214,43 +263,50 @@
     const lockByDate = true; // set to false if you don’t want locking
 
     // === 3) Calendar generation ===
+   
     const calendarEl = document.getElementById("calendar");
     const today = new Date();
     const isDecember = today.getMonth() === 11; // 0 = Jan, 11 = Dec
     const todayDate = today.getDate();
 
     for (let day = 1; day <= daysInDecember; day++) {
-      const dayEl = document.createElement("div");
-      dayEl.className = "day";
-      dayEl.textContent = day;
-      dayEl.dataset.day = day;
+        const dayEl = document.createElement("div");
+        dayEl.className = "day";
+        dayEl.dataset.day = day;
 
-      const locked =
-        lockByDate && isDecember && day > todayDate
-          ? true
-          : lockByDate && isDecember && day > todayDate
-          ? true
-          : lockByDate && !isDecember
-          ? false
-          : lockByDate && isDecember && day > todayDate;
+        // put number in a span (for overlay layering)
+        const label = document.createElement("span");
+        label.textContent = day;
+        dayEl.appendChild(label);
 
-      // simpler: lock if December AND lockByDate AND day > todayDate
-      const actuallyLocked = lockByDate && isDecember && day > todayDate;
-      if (actuallyLocked) {
-        dayEl.classList.add("locked");
-      }
+        const config = mediaByDay[day];
 
-      dayEl.addEventListener("click", () => {
-        if (actuallyLocked) {
-          // Optionally show a message instead of just doing nothing
-          alert("That day is not unlocked yet!");
-          return;
+        // ✨ set background image if available
+        if (config && config.thumb) {
+            dayEl.style.backgroundImage =
+            `linear-gradient(to bottom, rgba(15,23,42,0.2), rgba(15,23,42,0.85)), url('${config.thumb}')`;
         }
-        openModalForDay(day);
-      });
 
-      calendarEl.appendChild(dayEl);
+        const actuallyLocked = lockByDate && isDecember && day > todayDate;
+        if (actuallyLocked) {
+            dayEl.classList.add("locked");
+        }
+
+        dayEl.addEventListener("click", () => {
+            if (actuallyLocked) {
+            alert("waitttttttttttt not yet not yet");
+            return;
+            }
+
+            dayEl.classList.add("clicked");
+            setTimeout(() => dayEl.classList.remove("clicked"), 200);
+
+            openModalForDay(day);
+        });
+
+        calendarEl.appendChild(dayEl);
     }
+
 
     // === 4) Modal logic ===
     const modalBackdrop = document.getElementById("modalBackdrop");
